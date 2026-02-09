@@ -1,4 +1,14 @@
-# Full Stack Open
+<!doctype html>
+<html lang="en-US">
+<body>
 <h1>
-  This is the central repository for all Full Stack Open courses from the University of Helsinki
+  Full Stack Open
 </h1>
+<h3>
+  University of Helsinki
+</h3>
+<img src = "images/Helsinki.jpg" alt="University of Helsinki logo"/>
+<p>
+  This is the Central repository that holds all the submissions from the <a href="https://fullstackopen.com/en/">Full Stack Open</a> course 
+</p>
+</body>
