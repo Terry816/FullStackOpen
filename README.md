@@ -10,7 +10,6 @@
       <h3>
         University of Helsinki
       </h3>
-      <img src = "Readme_decor/Helsinki.jpg" alt="University of Helsinki logo"/>
     </div>
     <img src="Readme_decor/University_Entrance.jpg" alt="Picture of the campus" />
     <p>
