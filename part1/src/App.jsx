@@ -20,7 +20,6 @@ const Content = (props) => {
     </div>
   )
 }
-
 const Parts = ({ part, exercise }) => {
   return (
     <li>
@@ -28,7 +27,6 @@ const Parts = ({ part, exercise }) => {
     </li>
   )
 }
-
 const Total = (props) => {
   return (
     <p>Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}</p>
@@ -53,7 +51,6 @@ const App = () => {
       }
     ]
   }
-
   return (
     <div>
       <Header course={course.name} />
@@ -62,5 +59,5 @@ const App = () => {
     </div>
   )
 }
-
+// this is the progress check up until the javascript exercises
 export default App
