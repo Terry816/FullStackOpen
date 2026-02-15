@@ -40,6 +40,7 @@ const App = () => {
   const updateSelected = () => {
     const num = getRandomInt(0, 7)
     setSelected(num)
+
   }
 
   const updateVotes = () => {
