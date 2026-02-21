@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import personService from './services/person'
+import Notification from './components/Notification'
+
 
 const Entry = ({ text, value, handler }) => {
   return (
@@ -36,6 +38,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearch, setNewSearch] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+
 
   useEffect(() => {
     console.log("effect")
@@ -63,9 +67,18 @@ const App = () => {
       personService.update(SameName.id, newPerson)
         .then(response => {
           setPersons(prev => prev.map(node => node.name === SameName.name ? response.data : node))
-          setNewName('')
-          setNewNumber('')
+          setErrorMessage(`Changed ${newPerson.name} Number to ${newPerson.number}`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
+        .catch(error => {
+          setErrorMessage(`Information of '${newPerson.name}' has alreayd been removed from server`)
+          setTimeout(() => { setErrorMessage(null) }, 5000)
+          setPersons(prev => prev.filter(node => node.name !== SameName.name))
+        })
+      setNewName('')
+      setNewNumber('')
     }
     else {
       const newPerson = { name: newName, number: newNumber }
@@ -75,6 +88,10 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+      setErrorMessage(`Added ${newPerson.name}`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
 
@@ -107,6 +124,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Entry text={"filter shown with"} value={newSearch} handler={handleChangeState} />
       <h2>add a new</h2>
       <PersonForm newName={newName} newNumber={newNumber} namehandler={handleChangeName} numberhandler={handleChangeNumber} Addhandler={handleAddName} />
