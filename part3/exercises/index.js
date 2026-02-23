@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 app.use(express.json())
+const morgan = require('morgan')
+
 
 let persons =
   [
@@ -25,6 +27,12 @@ let persons =
       "number": "39-23-6423122"
     }
   ]
+
+morgan.token('personInfo', function (req, res) {
+  return JSON.stringify(req.body)
+})
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :personInfo'))
 
 function generateID() {
   return Math.floor(Math.random() * 10000)
@@ -97,6 +105,7 @@ app.delete('/api/persons/:id', (req, res) => {
   persons = persons.filter((p) => p.id !== id)
   res.status(204).end()
 })
+
 
 const PORT = 3002
 app.listen(PORT, () => {
