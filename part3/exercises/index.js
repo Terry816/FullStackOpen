@@ -93,8 +93,8 @@ app.post('/api/persons', (req, res) => {
     name: body.name,
     number: body.number
   }
-  persons.push(person)
-  res.json(persons)
+  persons = persons.concat(person)
+  res.json(person)
 
 })
 
