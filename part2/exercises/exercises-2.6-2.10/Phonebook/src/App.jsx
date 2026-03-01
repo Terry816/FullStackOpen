@@ -73,7 +73,7 @@ const App = () => {
           }, 5000)
         })
         .catch(error => {
-          setErrorMessage(`Information of '${newPerson.name}' has alreayd been removed from server`)
+          setErrorMessage(`Information of '${newPerson.name}' has already been removed from server`)
           setTimeout(() => { setErrorMessage(null) }, 5000)
           setPersons(prev => prev.filter(node => node.name !== SameName.name))
         })
