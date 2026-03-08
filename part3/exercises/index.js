@@ -6,9 +6,8 @@ app.use(express.static('dist'))
 
 require('dotenv').config()
 const Person = require('./models/person')
-const person = require('./models/person')
 
-morgan.token('personInfo', function (req, res) {
+morgan.token('personInfo', function (req) {
   return JSON.stringify(req.body)
 })
 
@@ -82,7 +81,7 @@ app.post('/api/persons', async (req, res, next) => {
 
 app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndDelete(req.params.id)
-    .then(result => {
+    .then(() => {
       res.status(204).end()
     })
     .catch(error => next(error))
