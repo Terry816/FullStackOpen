@@ -84,14 +84,20 @@ const App = () => {
       const newPerson = { name: newName, number: newNumber }
       personService.create(newPerson)
         .then(response => {
+          console.log("then statement has ran")
           setPersons(prev => prev.concat(response.data))
-          setNewName('')
-          setNewNumber('')
+          setErrorMessage(`Added ${newPerson.name}`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
-      setErrorMessage(`Added ${newPerson.name}`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+        .catch(error => {
+          console.log("this ran")
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => { setErrorMessage(null) }, 5000)
+        })
+      setNewName('')
+      setNewNumber('')
     }
   }
 

@@ -11,6 +11,7 @@ const person = require('./models/person')
 morgan.token('personInfo', function (req, res) {
   return JSON.stringify(req.body)
 })
+
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :personInfo'))
 
 app.get('/', (request, response) => {
@@ -23,11 +24,15 @@ app.get('/api/persons', (req, res) => {
   })
 })
 
-app.get('/info', (req, res) => {
-  res.send(`
-    <p>Phonebook has info for ${persons.length} people</p>
-    <p>${new Date()}</p>
-    `)
+app.get('/info', (req, res, next) => {
+  Person.countDocuments({})
+    .then(count => {
+      res.send(`
+        <p>Phonebook has info for ${count} people</p>
+        <p>${new Date()}</p>
+      `)
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
@@ -42,7 +47,7 @@ app.get('/api/persons/:id', (req, res, next) => {
     .catch(error => next(error))
 })
 
-app.post('/api/persons', async (req, res) => {
+app.post('/api/persons', async (req, res, next) => {
   const body = req.body
 
   if (!body.name) {
@@ -68,10 +73,11 @@ app.post('/api/persons', async (req, res) => {
     number: body.number
   })
 
-  person.save().then(person => {
-    res.json(person)
-  })
-
+  person.save()
+    .then(person => {
+      res.json(person)
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
@@ -99,7 +105,6 @@ app.put('/api/persons/:id', (req, res, next) => {
     .catch(error => next(error))
 })
 
-
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
@@ -112,6 +117,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({
+      error: error.message
+    })
   }
 
   next(error)
