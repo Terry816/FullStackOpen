@@ -1,7 +1,7 @@
-import { useRef } from "react"
-import Togglable from "./Togglable"
+import { useRef } from 'react'
+import Togglable from './Togglable'
 
-const Blog = ({ blog, updateLike }) => {
+const Blog = ({ blog, updateLike, removePost }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -23,6 +23,13 @@ const Blog = ({ blog, updateLike }) => {
     updateLike(blogObject)
   }
 
+  const removeBlog = (event) => {
+    event.preventDefault()
+    if (window.confirm(`Are you sure you want to delete: ${blog.title} by ${blog.author}?`)) {
+      removePost(blog.id)
+    }
+  }
+
   return (
     <div style={blogStyle}>
       <div>
@@ -33,6 +40,7 @@ const Blog = ({ blog, updateLike }) => {
           <p>{blog.url}</p>
           <p>likes: {blog.likes}</p> <button onClick={addLike}>upvote</button>
           <p>{blog.author}</p>
+          <p><button onClick={removeBlog}>remove</button></p>
         </div>
       </Togglable>
     </div>

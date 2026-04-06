@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
@@ -15,6 +15,11 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
 
   const blogFormRef = useRef()
+
+  const sortedBlogs = useMemo(
+    () => [...blogs].sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0)),
+    [blogs]
+  )
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -50,6 +55,19 @@ const App = () => {
   const updateLike = async blogObject => {
     const res = await blogService.update(blogObject.id, blogObject)
     setBlogs(blogs.map(b => b.id === res.id ? res : b))
+  }
+
+  const removeBlog = async id => {
+    try {
+      await blogService.remove(id)
+      setBlogs(prev => prev.filter(b => b.id !== id))
+    } catch (error) {
+      setErrorMessage('Don\'t have permission to delete another person\'s post')
+      console.log(error)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
   }
 
   const handleLogin = async event => {
@@ -131,9 +149,9 @@ const App = () => {
           <Togglable buttonLabel='create new blog' undoButtonLabel='cancel' ref={blogFormRef}>
             <BlogForm createBlog={addBlog} />
           </Togglable>
-          {blogs.map(blog =>
+          {sortedBlogs.map(blog =>
             <>
-              <Blog key={blog.id} blog={blog} updateLike={updateLike} />
+              <Blog key={blog.id} blog={blog} updateLike={updateLike} removePost={removeBlog} />
             </>
           )}
         </div>
