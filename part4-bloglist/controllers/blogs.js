@@ -64,22 +64,29 @@ blogRouter.put('/:id', async (request, response) => {
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
-  //decodedToken.id - cooresponds to the logged-in user's ID
-  //request.params.id - cooresponds to the blogs id
+
   const blog = await Blog.findById(request.params.id)
   if (!blog) {
     return response.status(404).end()
   }
 
-  if (!blog.user || blog.user.toString() !== decodedToken.id.toString()) {
-    return response.status(403).json({ error: 'only the creator can update a blog' })
-  }
   const body = request.body
+  const isOwner =
+    blog.user && blog.user.toString() === decodedToken.id.toString()
 
-  if (Object.hasOwn(body, 'title')) blog.title = body.title
-  if (Object.hasOwn(body, 'author')) blog.author = body.author
-  if (Object.hasOwn(body, 'url')) blog.url = body.url
-  if (Object.hasOwn(body, 'likes')) blog.likes = body.likes
+  if (isOwner) {
+    if (Object.hasOwn(body, 'title')) blog.title = body.title
+    if (Object.hasOwn(body, 'author')) blog.author = body.author
+    if (Object.hasOwn(body, 'url')) blog.url = body.url
+    if (Object.hasOwn(body, 'likes')) blog.likes = body.likes
+  } else {
+    if (!Object.hasOwn(body, 'likes')) {
+      return response
+        .status(403)
+        .json({ error: 'only the creator can update a blog' })
+    }
+    blog.likes = body.likes
+  }
 
   const updatedBlog = await blog.save()
   response.json(updatedBlog)

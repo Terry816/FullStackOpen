@@ -47,6 +47,11 @@ const App = () => {
     }, 5000)
   }
 
+  const updateLike = async blogObject => {
+    const res = await blogService.update(blogObject.id, blogObject)
+    setBlogs(blogs.map(b => b.id === res.id ? res : b))
+  }
+
   const handleLogin = async event => {
     event.preventDefault()
 
@@ -128,7 +133,7 @@ const App = () => {
           </Togglable>
           {blogs.map(blog =>
             <>
-              <Blog key={blog.id} blog={blog} />
+              <Blog key={blog.id} blog={blog} updateLike={updateLike} />
             </>
           )}
         </div>
