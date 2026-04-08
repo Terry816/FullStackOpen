@@ -33,13 +33,13 @@ const Blog = ({ blog, updateLike, removePost }) => {
   return (
     <div style={blogStyle}>
       <div>
-        {blog.title}
+        {blog.title} {blog.author}
       </div>
       <Togglable buttonLabel='view' undoButtonLabel='hide' ref={blogFormRef}>
         <div>
           <p>{blog.url}</p>
           <p>likes: {blog.likes}</p> <button onClick={addLike}>upvote</button>
-          <p>{blog.author}</p>
+          <p>posted by: {blog.user?.username ?? ''}</p>
           <p><button onClick={removeBlog}>remove</button></p>
         </div>
       </Togglable>
