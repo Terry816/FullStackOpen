@@ -18,7 +18,8 @@ const Blog = ({ blog, updateLike, removePost }) => {
       author: blog.author,
       url: blog.url,
       id: blog.id,
-      likes: blog.likes + 1
+      likes: blog.likes + 1,
+      user: blog.user
     }
     updateLike(blogObject)
   }
@@ -37,10 +38,10 @@ const Blog = ({ blog, updateLike, removePost }) => {
       </div>
       <Togglable buttonLabel='view' undoButtonLabel='hide' ref={blogFormRef}>
         <div>
-          <p>{blog.url}</p>
+          <p data-testid='url'>{blog.url}</p>
           <p>likes: {blog.likes}</p> <button onClick={addLike}>upvote</button>
           <p>posted by: {blog.user?.username ?? ''}</p>
-          <p><button onClick={removeBlog}>remove</button></p>
+          <p>{removePost && <button onClick={removeBlog}>remove</button>}</p>
         </div>
       </Togglable>
     </div>

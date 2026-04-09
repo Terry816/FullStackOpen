@@ -27,16 +27,16 @@ blogRouter.post('/', userExtractor, async (request, response) => {
   user.blogs = user.blogs.concat(savedBlog._id)
 
   await user.save()
-  response.status(201).json(savedBlog)
+  const populated = await savedBlog.populate('user', { username: 1, name: 1 })
+  response.status(201).json(populated)
 })
 
 blogRouter.get('/:id', async (request, response) => {
-  const blog = await Blog.findById(request.params.id)
-  if (blog) {
-    response.json(blog)
-  } else {
-    response.status(404).end()
+  const blog = await populateBlogUser(Blog.findById(request.params.id))
+  if (!blog) {
+    return response.status(404).end()
   }
+  response.json(blog)
 })
 
 blogRouter.delete('/:id', userExtractor, async (request, response) => {
@@ -73,7 +73,6 @@ blogRouter.put('/:id', async (request, response) => {
   const body = request.body
   const isOwner =
     blog.user && blog.user.toString() === decodedToken.id.toString()
-
   if (isOwner) {
     if (Object.hasOwn(body, 'title')) blog.title = body.title
     if (Object.hasOwn(body, 'author')) blog.author = body.author
@@ -89,7 +88,8 @@ blogRouter.put('/:id', async (request, response) => {
   }
 
   const updatedBlog = await blog.save()
-  response.json(updatedBlog)
+  const populated = await updatedBlog.populate('user', { username: 1, name: 1 })
+  response.json(populated)
 })
 
 
