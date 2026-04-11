@@ -1,11 +1,15 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Blog from './components/Blog'
-import Notification from './components/Notification'
-import LoginForm from './components/LoginForm'
-import Togglable from './components/Togglable'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import BlogForm from './components/BlogForm'
+import BlogList from './components/BlogList'
+import Notification from './components/Notification'
+
+import {
+  Routes, Route, Link, useMatch, useNavigate
+} from 'react-router-dom'
+import LoginForm from './components/LoginForm'
+import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -14,12 +18,20 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
 
-  const blogFormRef = useRef()
+  const navigate = useNavigate()
 
   const sortedBlogs = useMemo(
     () => [...blogs].sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0)),
     [blogs]
   )
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -33,17 +45,23 @@ const App = () => {
     fetchBlogs()
   }, [])
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+  const handleLogout = async event => {
+    event.preventDefault()
+
+    try {
+      window.localStorage.removeItem('loggedNoteappUser')
+      blogService.setToken(null)
+      setUser(null)
+    } catch {
+      setErrorMessage('Cannot logout an invalid user')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
-  }, [])
+  }
 
   const addBlog = async blogObject => {
-    blogFormRef.current.toggleVisibility()
+    // blogFormRef.current.toggleVisibility()
     const res = await blogService.create(blogObject)
     setBlogs(blogs.concat(res))
     setErrorMessage(`A New Blog: ${res.title} by ${res.author} has been added`)
@@ -82,7 +100,9 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      navigate('/')
     } catch {
+      console.log('this printed instead')
       setErrorMessage('wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
@@ -90,84 +110,56 @@ const App = () => {
     }
   }
 
-  const handleLogout = async event => {
-    event.preventDefault()
-
-    try {
-      window.localStorage.removeItem('loggedNoteappUser')
-      blogService.setToken(null)
-      setUser(null)
-    } catch {
-      setErrorMessage('Cannot logout an invalid user')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
+  const padding = {
+    padding: 5
   }
 
-  const loginForm = () => (
-    <>
-      <h1>Log in to the App</h1>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>
-            username
-            <input
-              type="text"
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            password
-            <input
-              type="password"
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </label>
-        </div>
-        <button type="submit">login</button>
-      </form>
-    </>
-  )
+  const match = useMatch('/notes/:id')
+  const blog = match
+    ? blogs.find(blog => blog.id === match.params.id)
+    : null
+
+  const blogUserId =
+    blog?.user && typeof blog.user === 'object'
+      ? blog?.user.id
+      : blog?.user
+  const isOwner =
+    user && blogUserId && String(blogUserId) === String(user.id)
 
   return (
+
     <div>
       <Notification message={errorMessage} />
 
-      {!user && loginForm()}
-      {user && (
-        <div>
-          <div>
-            <h2>blogs</h2>
-            <p>{user.name} logged in</p>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-          <Togglable buttonLabel='create new blog' undoButtonLabel='cancel' ref={blogFormRef}>
-            <BlogForm createBlog={addBlog} />
-          </Togglable>
-          {sortedBlogs.map(blog => {
-            const blogUserId =
-              blog.user && typeof blog.user === 'object'
-                ? blog.user.id
-                : blog.user
-            const isOwner =
-              user && blogUserId && String(blogUserId) === String(user.id)
-            return (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                updateLike={updateLike}
-                removePost={isOwner ? removeBlog : undefined}
-              />
-            )
-          })}
-        </div>
-      )}
+      <div>
+        <Link style={padding} to="/">blogs</Link>
+        {user && <Link style={padding} to="/create">create blog</Link>}
+        {user ? (
+          <button type="button" style={padding} onClick={handleLogout}>
+            logout
+          </button>
+        ) : (
+          <Link style={padding} to="/login">login</Link>
+        )}
+      </div>
 
+      <Routes>
+        <Route path="/" element={<BlogList blogs={sortedBlogs} user={user} />} />
+        <Route path="/notes/:id" element={
+          <Blog
+            blog={blog}
+            user={user}
+            updateLike={updateLike}
+            removePost={isOwner ? removeBlog : undefined}
+          />
+        } />
+        <Route path="/create" element={
+          <BlogForm createBlog={addBlog} />
+        } />
+        <Route path="/login" element={
+          <LoginForm handleSubmit={handleLogin} handleUsernameChange={(e) => setUsername(e.target.value)} handlePasswordChange={(e) => setPassword(e.target.value)} username={username} password={password} />
+        } />
+      </Routes>
     </div>
   )
 }

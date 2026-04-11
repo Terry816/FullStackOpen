@@ -1,15 +1,8 @@
-import { useRef } from 'react'
-import Togglable from './Togglable'
+import { useParams, useNavigate } from 'react-router-dom'
 
 const Blog = ({ blog, updateLike, removePost }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-  const blogFormRef = useRef()
+  const id = useParams().id
+  const navigate = useNavigate()
 
   const addLike = (event) => {
     event.preventDefault()
@@ -27,23 +20,22 @@ const Blog = ({ blog, updateLike, removePost }) => {
   const removeBlog = (event) => {
     event.preventDefault()
     if (window.confirm(`Are you sure you want to delete: ${blog.title} by ${blog.author}?`)) {
-      removePost(blog.id)
+      removePost(id)
+      navigate('/')
     }
   }
 
   return (
-    <div style={blogStyle}>
+    <div>
+      <h1>
+        {blog.author}: {blog.title}
+      </h1>
       <div>
-        {blog.title} {blog.author}
+        <a data-testid='url' href={blog.url} target="_blank" rel="noopener noreferrer">{blog.url}</a>
+        <p>likes: {blog.likes}</p> <button onClick={addLike}>upvote</button>
+        <p>Added by: {blog.user?.username ?? ''}</p>
+        <p>{removePost && <button onClick={removeBlog}>remove</button>}</p>
       </div>
-      <Togglable buttonLabel='view' undoButtonLabel='hide' ref={blogFormRef}>
-        <div>
-          <p data-testid='url'>{blog.url}</p>
-          <p>likes: {blog.likes}</p> <button onClick={addLike}>upvote</button>
-          <p>posted by: {blog.user?.username ?? ''}</p>
-          <p>{removePost && <button onClick={removeBlog}>remove</button>}</p>
-        </div>
-      </Togglable>
     </div>
   )
 }

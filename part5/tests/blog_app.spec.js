@@ -110,12 +110,6 @@ describe('Blog app', () => {
 
         })
 
-        const increaseLikes = async (num, locator) => {
-          for (let i = 0; i < num; i++) {
-            await locator.click()
-          }
-        }
-
         test('blogs are ordered by likes with most likes first', async ({ page }) => {
           test.setTimeout(20_000)
           const author = 'Playwright Author'
