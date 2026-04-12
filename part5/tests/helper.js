@@ -12,12 +12,11 @@ const createNote = async (page, content) => {
 }
 
 const createBlog = async (page, title, author, url) => {
-  await page.getByRole('button', { name: 'create new blog' }).click()
+  await page.getByText('create blog').click()
   await page.getByRole('textbox', { name: 'title' }).fill(title)
   await page.getByRole('textbox', { name: 'author' }).fill(author)
   await page.getByRole('textbox', { name: 'url' }).fill(url)
   await page.getByRole('button', { name: 'create' }).click()
-  await page.getByText(title + " " + author).waitFor()
 }
 
 export { loginWith, createNote, createBlog }

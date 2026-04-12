@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 
-const Blog = ({ blog, updateLike, removePost }) => {
+const Blog = ({ blog, user, updateLike, removePost }) => {
   const id = useParams().id
   const navigate = useNavigate()
 
@@ -32,7 +32,7 @@ const Blog = ({ blog, updateLike, removePost }) => {
       </h1>
       <div>
         <a data-testid='url' href={blog.url} target="_blank" rel="noopener noreferrer">{blog.url}</a>
-        <p>likes: {blog.likes}</p> <button onClick={addLike}>upvote</button>
+        <p>likes: {blog.likes}</p> {user && <button onClick={addLike}>upvote</button>}
         <p>Added by: {blog.user?.username ?? ''}</p>
         <p>{removePost && <button onClick={removeBlog}>remove</button>}</p>
       </div>

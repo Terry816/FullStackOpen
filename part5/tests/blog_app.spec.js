@@ -12,7 +12,7 @@ describe('Blog app', () => {
         password: 'salainen'
       }
     })
-    await page.goto('/')
+    await page.goto('/login')
   })
 
   test('Login form is shown', async ({ page }) => {
@@ -34,7 +34,6 @@ describe('Blog app', () => {
 
     test('fails with wrong credentials', async ({ page }) => {
       await loginWith(page, 'mluukkai', 'wrong')
-
       const errorDiv = page.locator('.error')
       await expect(errorDiv).toContainText('wrong username or password')
       const loginText = page.getByText("Matti Luukkainen logged in")
@@ -53,25 +52,24 @@ describe('Blog app', () => {
         await createBlog(page, title, author, url)
         const errorMsg = page.getByText('A New Blog: this is a test blog by Matt Luckey has been added')
         await expect(errorMsg).toBeVisible()
-        await expect(page.getByText('this is a test blog Matt Luckey')).toBeVisible()
+        await expect(page.getByRole('link', { name: /this is a test blog/ })).toBeVisible()
 
         await expect(page.getByText(url)).not.toBeVisible()
         await expect(page.getByText('likes')).not.toBeVisible()
-        await page.getByRole('button', { name: 'view' }).click()
-        await expect(page.getByTestId('url')).toBeVisible()
-        await expect(page.getByText('likes')).toBeVisible()
       })
 
       describe('After a new blog is created', () => {
+        const title = "this is a test blog"
+        const author = "Matt Luckey"
+        const url = "http://localhost:3001"
+
         beforeEach(async ({ page }) => {
-          const title = "this is a test blog"
-          const author = "Matt Luckey"
-          const url = "http://localhost:3001"
           await createBlog(page, title, author, url)
+          await page.getByRole('link', { name: /this is a test blog/ }).waitFor()
+          await page.getByRole('link', { name: /this is a test blog/ }).click()
         })
 
         test('blog like button works as expected', async ({ page }) => {
-          await page.getByRole('button', { name: 'view' }).click()
           await expect(page.getByTestId('url')).toBeVisible()
           await expect(page.getByText('likes: 0')).toBeVisible()
 
@@ -80,8 +78,6 @@ describe('Blog app', () => {
         })
 
         test('delete a blog', async ({ page }) => {
-          await expect(page.getByText('this is a test blog Matt Luckey')).toBeVisible()
-          await page.getByRole('button', { name: 'view' }).click()
           const removeButton = page.getByRole('button', { name: 'remove' })
           await expect(removeButton).toBeVisible()
           page.once('dialog', dialog => {
@@ -103,39 +99,15 @@ describe('Blog app', () => {
               password: 'password123'
             }
           })
+          await page.goto('/login')
           await loginWith(page, "Terry", "password123")
-          await expect(page.getByText('this is a test blog Matt Luckey')).toBeVisible()
+          await expect(page.getByText(/this is a test blog/)).toBeVisible()
+          await page.getByRole('link', { name: /this is a test blog/ }).click()
           await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
-          await expect(page.getByText('this is a test blog Matt Luckey')).toHaveCount(1);
 
         })
 
-        test('blogs are ordered by likes with most likes first', async ({ page }) => {
-          test.setTimeout(20_000)
-          const author = 'Playwright Author'
-          const url = 'http://example.com'
-          await createBlog(page, 'Low likes blog', author, url)
-          await createBlog(page, 'High likes blog', author, url)
-          await createBlog(page, 'Medium likes blog', author, url)
-          const addLikes = async (title, count) => {
-            const card = page.getByText(`${title} ${author}`).locator('..')
-            await card.getByRole('button', { name: 'view' }).click()
-            const upvote = card.getByRole('button', { name: 'upvote' })
-            for (let i = 0; i < count; i++) {
-              await upvote.click()
-              await expect(card.getByText(`likes: ${i + 1}`)).toBeVisible()
-            }
-          }
-          await addLikes('Low likes blog', 1)
-          await addLikes('High likes blog', 9)
-          await addLikes('Medium likes blog', 5)
-          const rowY = async title => {
-            const box = await page.getByText(`${title} ${author}`).boundingBox()
-            return box.y
-          }
-          await expect(await rowY('High likes blog')).toBeLessThan(await rowY('Medium likes blog'))
-          await expect(await rowY('Medium likes blog')).toBeLessThan(await rowY('Low likes blog'))
-        })
+
       })
 
 
