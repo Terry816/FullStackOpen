@@ -11,12 +11,15 @@ import {
 import LoginForm from './components/LoginForm'
 import loginService from './services/login'
 
+import { Container, AppBar, Toolbar, Button } from '@mui/material'
+
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [notification, setNotification] = useState(null)
 
   const navigate = useNavigate()
 
@@ -52,10 +55,11 @@ const App = () => {
       window.localStorage.removeItem('loggedNoteappUser')
       blogService.setToken(null)
       setUser(null)
+      navigate('/login')
     } catch {
-      setErrorMessage('Cannot logout an invalid user')
+      setNotification({ text: 'Cannot logout an invalid user', type: 'error' })
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
       }, 5000)
     }
   }
@@ -64,9 +68,9 @@ const App = () => {
     // blogFormRef.current.toggleVisibility()
     const res = await blogService.create(blogObject)
     setBlogs(blogs.concat(res))
-    setErrorMessage(`A New Blog: ${res.title} by ${res.author} has been added`)
+    setNotification({ text: `A New Blog: ${res.title} by ${res.author} has been added`, type: 'success' })
     setTimeout(() => {
-      setErrorMessage(null)
+      setNotification(null)
     }, 5000)
   }
 
@@ -80,10 +84,10 @@ const App = () => {
       await blogService.remove(id)
       setBlogs(prev => prev.filter(b => b.id !== id))
     } catch (error) {
-      setErrorMessage('Don\'t have permission to delete another person\'s post')
+      setNotification({ text: 'Don\'t have permission to delete another person\'s post', type: 'error' })
       console.log(error)
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
       }, 5000)
     }
   }
@@ -103,15 +107,11 @@ const App = () => {
       navigate('/')
     } catch {
       console.log('this printed instead')
-      setErrorMessage('wrong username or password')
+      setNotification({ text: 'wrong username or password', type: 'error' })
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
       }, 5000)
     }
-  }
-
-  const padding = {
-    padding: 5
   }
 
   const match = useMatch('/notes/:id')
@@ -125,23 +125,20 @@ const App = () => {
       : blog?.user
   const isOwner =
     user && blogUserId && String(blogUserId) === String(user.id)
+  const hoverStyle = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
 
   return (
+    <Container>
+      <AppBar position="static">
+        <Toolbar>
+          <Button color="inherit" component={Link} to="/" sx={hoverStyle}>blogs</Button>
+          {user && <Button color="inherit" component={Link} to="/create" sx={hoverStyle}>create blogs</Button>}
+          {user ? (<Button color="inherit" onClick={handleLogout} sx={hoverStyle}>logout</Button>) :
+            (<Button color="inherit" component={Link} to="/login" sx={hoverStyle}>login</Button>)}
+        </Toolbar>
+      </AppBar>
 
-    <div>
-      <Notification message={errorMessage} />
-
-      <div>
-        <Link style={padding} to="/">blogs</Link>
-        {user && <Link style={padding} to="/create">create blog</Link>}
-        {user ? (
-          <button type="button" style={padding} onClick={handleLogout}>
-            logout
-          </button>
-        ) : (
-          <Link style={padding} to="/login">login</Link>
-        )}
-      </div>
+      <Notification notification={notification} />
 
       <Routes>
         <Route path="/" element={<BlogList blogs={sortedBlogs} user={user} />} />
@@ -160,7 +157,8 @@ const App = () => {
           <LoginForm handleSubmit={handleLogin} handleUsernameChange={(e) => setUsername(e.target.value)} handlePasswordChange={(e) => setPassword(e.target.value)} username={username} password={password} />
         } />
       </Routes>
-    </div>
+
+    </Container>
   )
 }
 

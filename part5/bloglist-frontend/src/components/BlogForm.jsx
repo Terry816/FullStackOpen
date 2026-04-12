@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { TextField, Button, Stack, Typography } from '@mui/material'
 
 const handleChange = (event, setField) => {
   setField(event.target.value)
@@ -28,42 +29,47 @@ const BlogForm = ({ createBlog }) => {
   }
 
   return (
-    <>
-      <h2>create new</h2>
+    <Stack spacing={2} sx={{ maxWidth: 360, mt: 2 }}>
+      <Typography variant="h5" component="h2">Create New</Typography>
       <form onSubmit={addBlog}>
-        <div>
-          <label>
-            title
-            <input
-              value={newTitle}
-              onChange={(e) => handleChange(e, setNewTitle)}
-              placeholder='title'
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            author
-            <input
-              value={newAuthor}
-              onChange={(e) => handleChange(e, setNewAuthor)}
-              placeholder='author'
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            url
-            <input
-              value={newUrl}
-              onChange={(e) => handleChange(e, setNewUrl)}
-              placeholder='url'
-            />
-          </label>
-        </div>
-        <button type="submit">create</button>
+        <Stack spacing={2}>
+          <TextField
+            label="Title"
+            name="title"
+            value={newTitle}
+            onChange={(e) => handleChange(e, setNewTitle)}
+            fullWidth
+            size="small"
+            variant="outlined"
+            autoComplete="off"
+          />
+          <TextField
+            label="Author"
+            name="author"
+            value={newAuthor}
+            onChange={(e) => handleChange(e, setNewAuthor)}
+            fullWidth
+            size="small"
+            variant="outlined"
+            autoComplete="off"
+          />
+          <TextField
+            label="URL"
+            name="url"
+            type="url"
+            value={newUrl}
+            onChange={(e) => handleChange(e, setNewUrl)}
+            fullWidth
+            size="small"
+            variant="outlined"
+            autoComplete="off"
+          />
+          <Button type="submit" variant="contained" fullWidth>
+            create
+          </Button>
+        </Stack>
       </form>
-    </>
+    </Stack>
   )
 }
 

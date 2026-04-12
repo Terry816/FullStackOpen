@@ -13,9 +13,9 @@ test('<BlogForm /> updates parent state and calls onSubmit', async () => {
       <BlogForm createBlog={createBlog} />
     </MemoryRouter>
   )
-  const title = screen.getByPlaceholderText('title')
-  const author = screen.getByPlaceholderText('author')
-  const url = screen.getByPlaceholderText('url')
+  const title = screen.getByRole('textbox', { name: /title/i })
+  const author = screen.getByRole('textbox', { name: /author/i })
+  const url = screen.getByRole('textbox', { name: /url/i })
 
   await user.type(title, 'testing a form...')
   await user.type(author, 'Terry Kim')

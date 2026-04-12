@@ -1,3 +1,5 @@
+import { TextField, Button, Stack, Typography } from '@mui/material'
+
 const LoginForm = ({
   handleSubmit,
   handleUsernameChange,
@@ -6,33 +8,33 @@ const LoginForm = ({
   password
 }) => {
   return (
-    <div>
-      <h2>Login</h2>
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>
-            username
-            <input
-              type="text"
-              value={username}
-              onChange={handleUsernameChange}
-            />
-          </label>
-        </div>
-        <div>
-          <label>
-            password
-            <input
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
-          </label>
-        </div>
-        <button type="submit">login</button>
-      </form>
-    </div>
+    <Stack spacing={2} sx={{ maxWidth: 360, mt: 2 }}>
+      <Typography variant="h5" component="h2">Login</Typography>
+      <TextField
+        label="Username"
+        name="username"
+        autoComplete="username"
+        value={username}
+        onChange={handleUsernameChange}
+        fullWidth
+        size="small"
+        variant="outlined"
+      />
+      <TextField
+        label="Password"
+        name="password"
+        type="password"
+        autoComplete="current-password"
+        value={password}
+        onChange={handlePasswordChange}
+        fullWidth
+        size="small"
+        variant="outlined"
+      />
+      <Button type="submit" onClick={handleSubmit} variant="contained" fullWidth>
+        Log in
+      </Button>
+    </Stack>
   )
 }
 
