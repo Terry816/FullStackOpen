@@ -11,7 +11,7 @@ const AnecdoteList = () => {
       {sorted.map(anecdote => (
         <div key={anecdote.id}>
           {anecdote.content}
-          <div key={anecdote.id}>
+          <div>
             has {anecdote.votes}
             <button onClick={() => vote(anecdote.id)}>vote</button>
           </div>
