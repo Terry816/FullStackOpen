@@ -1,14 +1,15 @@
-import { useAnecdoteActions } from '../store'
+import { useAnecdoteActions, useNotificationActions } from '../store'
 
 const AnecdoteForm = () => {
   const { add } = useAnecdoteActions()
-
-  const generateId = () => Number((Math.random() * 1000000).toFixed(0))
+  const { setMessage } = useNotificationActions()
 
   const addAnecdote = (e) => {
     e.preventDefault()
     const content = e.target.anecdote.value
-    add({ id: generateId(), content, votes: 0 })
+    add(content)
+    setMessage(`Added ${content}`)
+    setTimeout(() => setMessage(""), 5000)
     e.target.reset()
   }
   return (

@@ -1,32 +1,38 @@
 import { create } from 'zustand'
+import aService from "./services/anecdotes"
 
-const anecdotesAtStart = [
-  'If it hurts, do it more often',
-  'Adding manpower to a late software project makes it later!',
-  'The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
-  'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
-  'Premature optimization is the root of all evil.',
-  'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
-]
 
-const getId = () => (100000 * Math.random()).toFixed(0)
-
-const asObject = anecdote => ({
-  content: anecdote,
-  id: getId(),
-  votes: 0
-})
-
-const useAnecdoteStore = create((set) => ({
-  anecdotes: anecdotesAtStart.map(asObject),
+const useAnecdoteStore = create((set, get) => ({
+  anecdotes: [],
   filter: "",
   actions: {
-    vote: id => set(state => ({ anecdotes: state.anecdotes.map(an => an.id === id ? { ...an, votes: an.votes + 1 } : an) })),
-    add: anec => set(state => ({ anecdotes: state.anecdotes.concat(anec) })),
-    setFilter: value => set(() => ({ filter: value }))
+    vote: async (id) => {
+      const anec = get().anecdotes.find(an => an.id === id)
+      const updated = await aService.updateVote(id, { ...anec, votes: anec.votes + 1 })
+      set(state => ({ anecdotes: state.anecdotes.map(an => an.id === id ? updated : an) }))
+    },
+    add: async (anec) => {
+      const anecdote = await aService.createNew(anec)
+      set(state => ({ anecdotes: state.anecdotes.concat(anecdote) }))
+    },
+    setFilter: value => set(() => ({ filter: value })),
+    initialize: async () => {
+      const anecdotes = await aService.getAll()
+      set(() => ({ anecdotes }))
+    }
+  }
+}))
+
+const useNotificationStore = create((set) => ({
+  message: "",
+  actions: {
+    setMessage: (msg) => set(() => ({ message: msg }))
   }
 }))
 
 export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes)
 export const useFilter = () => useAnecdoteStore((state) => state.filter)
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
+
+export const useNotification = () => useNotificationStore((state) => state.message)
+export const useNotificationActions = () => useNotificationStore((state) => state.actions)
