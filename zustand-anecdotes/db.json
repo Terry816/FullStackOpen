@@ -46,34 +46,9 @@
       "id": "aWtDPyjhFGw"
     },
     {
-      "content": "ttt",
-      "votes": 0,
-      "id": "Q9yMojuTa80"
-    },
-    {
       "content": "now does it work",
       "votes": 1,
       "id": "_ZhOWPSOTUE"
-    },
-    {
-      "content": "asd",
-      "votes": 0,
-      "id": "2-yRtdBCn3c"
-    },
-    {
-      "content": "did this work",
-      "votes": 0,
-      "id": "6JYY8lgy8FU"
-    },
-    {
-      "content": "sadf",
-      "votes": 0,
-      "id": "3TdY6K_DZTM"
-    },
-    {
-      "content": "how about now",
-      "votes": 0,
-      "id": "q40zOu6BOrc"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

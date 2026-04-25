@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import aService from "./services/anecdotes"
+import anecdotes from './services/anecdotes'
 
 
 const useAnecdoteStore = create((set, get) => ({
@@ -19,7 +20,12 @@ const useAnecdoteStore = create((set, get) => ({
     initialize: async () => {
       const anecdotes = await aService.getAll()
       set(() => ({ anecdotes }))
-    }
+    },
+    removeZeros: async () => {
+      const zeros = get().anecdotes.filter((anec) => anec.votes === 0)
+      set(state => ({ anecdotes: state.anecdotes.filter((anec) => anec.votes !== 0) }))
+      await Promise.all(zeros.map(a => aService.remove(a.id)))
+    },
   }
 }))
 
