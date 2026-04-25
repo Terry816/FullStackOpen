@@ -1,10 +1,12 @@
-import { useAnecdotes, useAnecdoteActions } from '../store'
+import { useAnecdotes, useAnecdoteActions, useFilter } from '../store'
 
 const AnecdoteList = () => {
   const anecdotes = useAnecdotes()
+  const filter = useFilter()
   const { vote } = useAnecdoteActions()
 
-  const sorted = anecdotes.sort((a, b) => b.votes - a.votes)
+  const filteredanecdotes = anecdotes.filter(sentences => sentences.content.includes(filter))
+  const sorted = filteredanecdotes.sort((a, b) => b.votes - a.votes)
 
   return (
     <>
