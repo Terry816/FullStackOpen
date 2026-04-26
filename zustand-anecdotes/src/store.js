@@ -1,7 +1,5 @@
 import { create } from 'zustand'
 import aService from "./services/anecdotes"
-import anecdotes from './services/anecdotes'
-
 
 const useAnecdoteStore = create((set, get) => ({
   anecdotes: [],
@@ -36,7 +34,17 @@ const useNotificationStore = create((set) => ({
   }
 }))
 
-export const useAnecdotes = () => useAnecdoteStore((state) => state.anecdotes)
+export default useAnecdoteStore
+
+export const useAnecdotes = () => {
+  const anec = useAnecdoteStore((state) => state.anecdotes)
+  const filter = useAnecdoteStore((state) => state.filter)
+  const filteredanecdotes = anec.filter(sentences => sentences.content.includes(filter))
+  const sorted = filteredanecdotes.sort((a, b) => b.votes - a.votes)
+  return sorted
+}
+
+
 export const useFilter = () => useAnecdoteStore((state) => state.filter)
 export const useAnecdoteActions = () => useAnecdoteStore((state) => state.actions)
 
