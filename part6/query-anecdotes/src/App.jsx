@@ -1,12 +1,16 @@
 import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { useAnecdotes } from './hooks/useAnecdotes'
+import useNotification from './hooks/useNotify'
 
 const App = () => {
   const { anecdotes, isPending, isError, vote } = useAnecdotes()
+  const { message, setMessage } = useNotification()
 
   const handleVote = (anecdote) => {
     vote(anecdote)
+    setMessage(`Anecdote ${anecdote.content} voted`)
+    setTimeout(() => setMessage(null), 5000)
   }
 
   if (isPending)
@@ -19,7 +23,7 @@ const App = () => {
     <div>
       <h3>Anecdote app</h3>
 
-      <Notification />
+      {message && <Notification />}
       <AnecdoteForm />
 
       {anecdotes.map((anecdote) => (
