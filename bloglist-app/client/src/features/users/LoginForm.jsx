@@ -1,15 +1,17 @@
-import { TextField, Button, Stack, Typography } from '@mui/material'
+import { TextField, Button, Stack, Typography } from "@mui/material";
 
 const LoginForm = ({
   handleSubmit,
   handleUsernameChange,
   handlePasswordChange,
   username,
-  password
+  password,
 }) => {
   return (
     <Stack spacing={2} sx={{ maxWidth: 360, mt: 2 }}>
-      <Typography variant="h5" component="h2">Login</Typography>
+      <Typography variant="h5" component="h2">
+        Login
+      </Typography>
       <TextField
         label="Username"
         name="username"
@@ -31,11 +33,16 @@ const LoginForm = ({
         size="small"
         variant="outlined"
       />
-      <Button type="submit" onClick={handleSubmit} variant="contained" fullWidth>
+      <Button
+        type="submit"
+        onClick={handleSubmit}
+        variant="contained"
+        fullWidth
+      >
         Log in
       </Button>
     </Stack>
-  )
-}
+  );
+};
 
-export default LoginForm
+export default LoginForm;

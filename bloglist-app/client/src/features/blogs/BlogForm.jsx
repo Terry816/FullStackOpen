@@ -1,36 +1,38 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { TextField, Button, Stack, Typography } from '@mui/material'
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { TextField, Button, Stack, Typography } from "@mui/material";
 
 const handleChange = (event, setField) => {
-  setField(event.target.value)
-}
+  setField(event.target.value);
+};
 
 const BlogForm = ({ createBlog }) => {
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
+  const [newTitle, setNewTitle] = useState("");
+  const [newAuthor, setNewAuthor] = useState("");
+  const [newUrl, setNewUrl] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const addBlog = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const blogObject = {
       title: newTitle,
       author: newAuthor,
-      url: newUrl
-    }
-    createBlog(blogObject)
+      url: newUrl,
+    };
+    createBlog(blogObject);
 
-    setNewTitle('')
-    setNewAuthor('')
-    setNewUrl('')
-    navigate('/')
-  }
+    setNewTitle("");
+    setNewAuthor("");
+    setNewUrl("");
+    navigate("/");
+  };
 
   return (
     <Stack spacing={2} sx={{ maxWidth: 360, mt: 2 }}>
-      <Typography variant="h5" component="h2">Create New</Typography>
+      <Typography variant="h5" component="h2">
+        Create New
+      </Typography>
       <form onSubmit={addBlog}>
         <Stack spacing={2}>
           <TextField
@@ -70,7 +72,7 @@ const BlogForm = ({ createBlog }) => {
         </Stack>
       </form>
     </Stack>
-  )
-}
+  );
+};
 
-export default BlogForm
+export default BlogForm;

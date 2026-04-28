@@ -1,37 +1,34 @@
-import { useParams, useNavigate } from 'react-router-dom'
-import {
-  Box,
-  Button,
-  Link,
-  Paper,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { useParams, useNavigate } from "react-router-dom";
+import { Box, Button, Link, Paper, Stack, Typography } from "@mui/material";
 
 const Blog = ({ blog, user, updateLike, removePost }) => {
-  const id = useParams().id
-  const navigate = useNavigate()
+  const id = useParams().id;
+  const navigate = useNavigate();
 
   const addLike = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const blogObject = {
       title: blog.title,
       author: blog.author,
       url: blog.url,
       id: blog.id,
       likes: blog.likes + 1,
-      user: blog.user
-    }
-    updateLike(blogObject)
-  }
+      user: blog.user,
+    };
+    updateLike(blogObject);
+  };
 
   const removeBlog = (event) => {
-    event.preventDefault()
-    if (window.confirm(`Are you sure you want to delete: ${blog.title} by ${blog.author}?`)) {
-      removePost(id)
-      navigate('/')
+    event.preventDefault();
+    if (
+      window.confirm(
+        `Are you sure you want to delete: ${blog.title} by ${blog.author}?`,
+      )
+    ) {
+      removePost(id);
+      navigate("/");
     }
-  }
+  };
 
   if (!blog) {
     return (
@@ -40,7 +37,7 @@ const Blog = ({ blog, user, updateLike, removePost }) => {
           <Typography color="text.secondary">Blog not found.</Typography>
         </Paper>
       </Box>
-    )
+    );
   }
 
   return (
@@ -52,7 +49,12 @@ const Blog = ({ blog, user, updateLike, removePost }) => {
           borderRadius: 2,
         }}
       >
-        <Typography variant="h4" component="h1" gutterBottom sx={{ fontWeight: 600 }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          sx={{ fontWeight: 600 }}
+        >
           {blog.title}
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" gutterBottom>
@@ -64,17 +66,17 @@ const Blog = ({ blog, user, updateLike, removePost }) => {
           target="_blank"
           rel="noopener noreferrer"
           variant="body1"
-          sx={{ wordBreak: 'break-all' }}
+          sx={{ wordBreak: "break-all" }}
         >
           {blog.url}
         </Link>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-          Added by: {blog.user?.username ?? '—'}
+          Added by: {blog.user?.username ?? "—"}
         </Typography>
         <Stack
           direction="row"
-          alignItems="center"
-          flexWrap="wrap"
+          alignitems="center"
+          flexwrap="wrap"
           spacing={2}
           sx={{ mt: 2 }}
           useFlexGap
@@ -83,7 +85,7 @@ const Blog = ({ blog, user, updateLike, removePost }) => {
             Likes: <strong>{blog.likes}</strong>
           </Typography>
           {(user || removePost) && (
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            <Stack direction="row" spacing={1} flexwrap="wrap" useFlexGap>
               {user && (
                 <Button
                   type="button"
@@ -110,7 +112,7 @@ const Blog = ({ blog, user, updateLike, removePost }) => {
         </Stack>
       </Paper>
     </Box>
-  )
-}
+  );
+};
 
-export default Blog
+export default Blog;
