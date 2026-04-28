@@ -1,19 +1,19 @@
 import { AppBar, Toolbar, Button } from "@mui/material";
 import { Link, useNavigate  } from "react-router-dom";
-import { useUser } from "../../stores/userStore"
+import { useUser, useUserAction } from "../../stores/userStore"
 
 const Navbar = () => {
   const user = useUser()
   const hoverStyle = { "&:hover": { bgcolor: "rgba(255,255,255,0.3)" } };
   const navigate = useNavigate();
 
+  const { logout } = useUserAction()
+
   const handleLogout = async (event) => {
       event.preventDefault();
   
       try {
-        window.localStorage.removeItem("loggedNoteappUser");
-        blogService.setToken(null);
-        setUser(null);
+        logout()
         navigate("/login");
       } catch {
         // setMessage({ text: "Cannot logout an invalid user", type: "error" });

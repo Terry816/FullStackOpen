@@ -6,11 +6,6 @@ import { useEffect } from "react";
 const BlogList = () => {
   const user = useUser()
   const blogs = useBlogs()
-  const { retrieve } = useUserAction();
-
-  useEffect(() => {
-      retrieve()
-    }, [retrieve])
 
   return (
     <>

@@ -13,6 +13,7 @@ import Navbar from "./features/misc/Navbar";
 
 import {useNotification, useNotificationActions} from "./stores/notificationStore"
 import { useBlogActions } from "./stores/blogStore"
+import { useUserAction } from "./stores/userStore";
 
 
 const App = () => {
@@ -21,11 +22,15 @@ const App = () => {
   const { setMessage } = useNotificationActions();
   const { initialize } = useBlogActions()
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     initialize()
   }, [initialize])
+
+  const { retrieve } = useUserAction();
+
+  useEffect(() => {
+      retrieve()
+    }, [retrieve])
 
   return (
     <Container>
