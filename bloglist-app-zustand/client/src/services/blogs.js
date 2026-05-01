@@ -1,5 +1,6 @@
 import axios from "axios";
 const baseUrl = "/api/blogs";
+import userStore from "../stores/userStore"
 
 const getAll = async () => {
   const response = await axios.get(baseUrl);
@@ -7,14 +8,19 @@ const getAll = async () => {
 };
 
 const create = async (newObject) => {
+  const token = userStore.getState().token
+  
   const config = {
     headers: { Authorization: token },
   };
   const response = await axios.post(baseUrl, newObject, config);
+
   return response.data;
 };
 
 const update = async (id, newObject) => {
+  const token = userStore.getState().token
+
   const config = {
     headers: { Authorization: token },
   };
@@ -24,6 +30,8 @@ const update = async (id, newObject) => {
 };
 
 const remove = async (id) => {
+  const token = userStore.getState().token
+
   const config = {
     headers: { Authorization: token },
   };

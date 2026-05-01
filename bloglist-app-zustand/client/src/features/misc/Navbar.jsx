@@ -1,6 +1,7 @@
 import { AppBar, Toolbar, Button } from "@mui/material";
 import { Link, useNavigate  } from "react-router-dom";
 import { useUser, useUserAction } from "../../stores/userStore"
+import { useNotificationActions } from "../../stores/notificationStore"
 
 const Navbar = () => {
   const user = useUser()
@@ -11,16 +12,8 @@ const Navbar = () => {
 
   const handleLogout = async (event) => {
       event.preventDefault();
-  
-      try {
-        logout()
-        navigate("/login");
-      } catch {
-        // setMessage({ text: "Cannot logout an invalid user", type: "error" });
-        // setTimeout(() => {
-        //   setMessage(null);
-        // }, 5000);
-      }
+      logout()
+      navigate("/login");
   };
 
   return (
@@ -28,6 +21,9 @@ const Navbar = () => {
       <Toolbar>
         <Button color="inherit" component={Link} to="/" sx={hoverStyle}>
           blogs
+        </Button>
+        <Button color="inherit" component={Link} to="/users" sx={hoverStyle}>
+          Users
         </Button>
         {user && (
           <Button

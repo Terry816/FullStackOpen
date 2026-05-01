@@ -1,16 +1,12 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Stack, Typography } from "@mui/material";
 import { useBlogActions } from "../../stores/blogStore"; 
-
-const handleChange = (event, setField) => {
-  setField(event.target.value);
-};
+import useField from "../../hooks/useField"
 
 const BlogForm = () => {
-  const [newTitle, setNewTitle] = useState("");
-  const [newAuthor, setNewAuthor] = useState("");
-  const [newUrl, setNewUrl] = useState("");
+  const { reset: titleReset, ...title } = useField({name: "title", label: "Title"});
+  const { reset: authorReset, ...author} = useField({type: "text", name: "author", label: "Author"});
+  const { reset: urlReset, ...url} = useField({type: "url", name: "url", label: "Url"});
 
   const navigate = useNavigate();
 
@@ -19,14 +15,14 @@ const BlogForm = () => {
   const addBlog = (event) => {
     event.preventDefault();
     const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
+      title: title.value,
+      author: author.value,
+      url: url.value,
     };
     createNew(blogObject);
-    setNewTitle("");
-    setNewAuthor("");
-    setNewUrl("");
+    titleReset()
+    authorReset()
+    urlReset()
     navigate("/");
   };
 
@@ -37,36 +33,11 @@ const BlogForm = () => {
       </Typography>
       <form onSubmit={addBlog}>
         <Stack spacing={2}>
-          <TextField
-            label="Title"
-            name="title"
-            value={newTitle}
-            onChange={(e) => handleChange(e, setNewTitle)}
-            fullWidth
-            size="small"
-            variant="outlined"
-            autoComplete="off"
+          <TextField {...title}
           />
-          <TextField
-            label="Author"
-            name="author"
-            value={newAuthor}
-            onChange={(e) => handleChange(e, setNewAuthor)}
-            fullWidth
-            size="small"
-            variant="outlined"
-            autoComplete="off"
+          <TextField {...author}
           />
-          <TextField
-            label="URL"
-            name="url"
-            type="url"
-            value={newUrl}
-            onChange={(e) => handleChange(e, setNewUrl)}
-            fullWidth
-            size="small"
-            variant="outlined"
-            autoComplete="off"
+          <TextField {...url}
           />
           <Button type="submit" variant="contained" fullWidth>
             create

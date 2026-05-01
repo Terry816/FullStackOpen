@@ -3,11 +3,9 @@ import { useUser, useUserAction } from "../../stores/userStore";
 import { useState, useEffect } from "react";
 import {useNotification, useNotificationActions} from "../../stores/notificationStore"
 import { useNavigate } from "react-router-dom";
-import Notification from "../notifications/Notification";
 
 const LoginForm = () => {
 
-  const message = useNotification()
   const { setMessage } = useNotificationActions();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,13 +17,12 @@ const LoginForm = () => {
     event.preventDefault();
 
     try {
-      login(username, password)
+      await login(username, password)
       setUsername("");
       setPassword("");
       navigate("/");
-    } catch {
-      console.log("this printed instead");
-      setMessage({ text: "wrong username or password", type: "error" });
+    } catch (err) {
+      setMessage({ text: err.message, type: "error" });
       setTimeout(() => {
         setMessage(null);
       }, 5000);
@@ -34,7 +31,6 @@ const LoginForm = () => {
 
   return (
     <Stack spacing={2} sx={{ maxWidth: 360, mt: 2 }}>
-      <Notification notification={message} />
       <Typography variant="h5" component="h2">
         Login
       </Typography>

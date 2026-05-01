@@ -10,52 +10,51 @@ import Notification from "./features/notifications/Notification";
 import LoginForm from "./features/users/LoginForm";
 import ErrorFallback from "./features/misc/ErrorBoundary";
 import Navbar from "./features/misc/Navbar";
+import UserList from "./features/users/UserList";
+import User from "./features/users/User";
 
-import {useNotification, useNotificationActions} from "./stores/notificationStore"
-import { useBlogActions } from "./stores/blogStore"
+import {
+  useNotification,
+  useNotificationType,
+  useNotificationActions,
+} from "./stores/notificationStore";
+import { useBlogActions } from "./stores/blogStore";
 import { useUserAction } from "./stores/userStore";
 
-
 const App = () => {
-
   const message = useNotification();
-  const { setMessage } = useNotificationActions();
-  const { initialize } = useBlogActions()
+  const type = useNotificationType();
+  const { initialize } = useBlogActions();
 
   useEffect(() => {
-    initialize()
-  }, [initialize])
+    initialize();
+  }, [initialize]);
 
   const { retrieve } = useUserAction();
 
   useEffect(() => {
-      retrieve()
-    }, [retrieve])
+    retrieve();
+  }, [retrieve]);
+
+  const { initializeUsers } = useUserAction();
+
+  useEffect(() => {
+    initializeUsers();
+  }, [initializeUsers]);
 
   return (
     <Container>
-    <Navbar ></Navbar>
+      <Navbar></Navbar>
 
-      <Notification notification={message} />
+      <Notification msg={message} type={type} />
       <ErrorBoundary FallbackComponent={ErrorFallback}>
         <Routes>
-          <Route
-            path="/"
-            element={<BlogList />}
-          />
-          <Route
-            path="/:id"
-            element={
-              <Blog />
-            }
-          />
+          <Route path="/" element={<BlogList />} />
+          <Route path="/users" element={<UserList />} />
+          <Route path="/:id" element={<Blog />} />
+          <Route path="/users/:id" element={<User />} />
           <Route path="/create" element={<BlogForm />} />
-          <Route
-            path="/login"
-            element={
-              <LoginForm />
-            }
-          />
+          <Route path="/login" element={<LoginForm />} />
           <Route path="*" element={<h1>404 - Page not found</h1>} />
         </Routes>
       </ErrorBoundary>

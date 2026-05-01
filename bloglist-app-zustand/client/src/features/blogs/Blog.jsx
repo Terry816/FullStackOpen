@@ -1,23 +1,20 @@
-import { Routes, Route, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Box, Button, Link, Paper, Stack, Typography } from "@mui/material";
 import { useBlogs, useBlogActions } from "../../stores/blogStore";
-import { useUser } from "../../stores/userStore"
+import { useUser } from "../../stores/userStore";
 
 const Blog = () => {
-  const user = useUser()
-  const blogs = useBlogs()
+  const user = useUser();
+  const blogs = useBlogs();
 
   const id = useParams().id;
   const blog = id ? blogs.find((blog) => blog.id === id) : null;
   const navigate = useNavigate();
 
   const { upvote, remove } = useBlogActions();
-
-  const isOwner = String(blog.user?.id) === String(user?.id);
   const addLike = (event) => {
     event.preventDefault();
     upvote(blog.id);
-    
   };
 
   const removeBlog = (event) => {
@@ -41,6 +38,8 @@ const Blog = () => {
       </Box>
     );
   }
+
+  const isOwner = String(blog.user?.id) === String(user?.id);
 
   return (
     <Box sx={{ py: 3 }}>
@@ -98,7 +97,7 @@ const Blog = () => {
                   upvote
                 </Button>
               )}
-              {(user && isOwner) && (
+              {user && isOwner && (
                 <Button
                   type="button"
                   variant="outlined"
