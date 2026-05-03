@@ -1,28 +1,39 @@
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Stack, Typography } from "@mui/material";
-import { useBlogActions } from "../../stores/blogStore"; 
-import useField from "../../hooks/useField"
+import { useBlogActions } from "../../stores/blogStore";
+import useField from "../../hooks/useField";
 
 const BlogForm = () => {
-  const { reset: titleReset, ...title } = useField({name: "title", label: "Title"});
-  const { reset: authorReset, ...author} = useField({type: "text", name: "author", label: "Author"});
-  const { reset: urlReset, ...url} = useField({type: "url", name: "url", label: "Url"});
+  const { reset: titleReset, ...title } = useField({
+    name: "title",
+    label: "Title",
+  });
+  const { reset: authorReset, ...author } = useField({
+    type: "text",
+    name: "author",
+    label: "Author",
+  });
+  const { reset: urlReset, ...url } = useField({
+    type: "url",
+    name: "url",
+    label: "Url",
+  });
 
   const navigate = useNavigate();
 
-  const { createNew } = useBlogActions()
+  const { createNew } = useBlogActions();
 
-  const addBlog = (event) => {
+  const addBlog = async (event) => {
     event.preventDefault();
     const blogObject = {
       title: title.value,
       author: author.value,
       url: url.value,
     };
-    createNew(blogObject);
-    titleReset()
-    authorReset()
-    urlReset()
+    await createNew(blogObject);
+    titleReset();
+    authorReset();
+    urlReset();
     navigate("/");
   };
 
@@ -33,12 +44,9 @@ const BlogForm = () => {
       </Typography>
       <form onSubmit={addBlog}>
         <Stack spacing={2}>
-          <TextField {...title}
-          />
-          <TextField {...author}
-          />
-          <TextField {...url}
-          />
+          <TextField {...title} />
+          <TextField {...author} />
+          <TextField {...url} />
           <Button type="submit" variant="contained" fullWidth>
             create
           </Button>

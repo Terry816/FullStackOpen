@@ -79,15 +79,9 @@ blogRouter.put("/:id", async (request, response) => {
     if (Object.hasOwn(body, "title")) blog.title = body.title;
     if (Object.hasOwn(body, "author")) blog.author = body.author;
     if (Object.hasOwn(body, "url")) blog.url = body.url;
-    if (Object.hasOwn(body, "likes")) blog.likes = body.likes;
-  } else {
-    if (!Object.hasOwn(body, "likes")) {
-      return response
-        .status(403)
-        .json({ error: "only the creator can update a blog" });
-    }
-    blog.likes = body.likes;
-  }
+  } 
+  blog.likes = body.likes;
+  blog.comments = body.comments
 
   const updatedBlog = await blog.save();
   const populated = await updatedBlog.populate("user", {

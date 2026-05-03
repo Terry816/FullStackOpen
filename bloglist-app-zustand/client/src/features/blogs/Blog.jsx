@@ -1,32 +1,56 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Box, Button, Link, Paper, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Link,
+  Paper,
+  Stack,
+  Typography,
+  TextField,
+  Divider,
+} from "@mui/material";
 import { useBlogs, useBlogActions } from "../../stores/blogStore";
 import { useUser } from "../../stores/userStore";
+import { useState } from "react";
 
 const Blog = () => {
   const user = useUser();
   const blogs = useBlogs();
 
+  const [comment, setComment] = useState("");
+
   const id = useParams().id;
   const blog = id ? blogs.find((blog) => blog.id === id) : null;
   const navigate = useNavigate();
 
-  const { upvote, remove } = useBlogActions();
-  const addLike = (event) => {
+  const { upvote, remove, addComment } = useBlogActions();
+  const addLike = async (event) => {
     event.preventDefault();
-    upvote(blog.id);
+    await upvote(blog.id);
   };
 
-  const removeBlog = (event) => {
+  const removeBlog = async (event) => {
     event.preventDefault();
     if (
       window.confirm(
         `Are you sure you want to delete: ${blog.title} by ${blog.author}?`,
       )
     ) {
-      remove(id);
+      await remove(id);
       navigate("/");
     }
+  };
+
+  const handleComment = async (event) => {
+    event.preventDefault();
+    const trimmedComment = comment.trim();
+
+    if (!trimmedComment) {
+      return;
+    }
+
+    await addComment(id, trimmedComment);
+    setComment("");
   };
 
   if (!blog) {
@@ -76,8 +100,8 @@ const Blog = () => {
         </Typography>
         <Stack
           direction="row"
-          alignitems="center"
-          flexwrap="wrap"
+          alignItems="center"
+          flexWrap="wrap"
           spacing={2}
           sx={{ mt: 2 }}
           useFlexGap
@@ -86,7 +110,7 @@ const Blog = () => {
             Likes: <strong>{blog.likes}</strong>
           </Typography>
           {
-            <Stack direction="row" spacing={1} flexwrap="wrap" useFlexGap>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
               {user && (
                 <Button
                   type="button"
@@ -111,6 +135,62 @@ const Blog = () => {
             </Stack>
           }
         </Stack>
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h5" component="h2" sx={{ fontWeight: 600 }}>
+          Comments
+        </Typography>
+        <Stack
+          component="form"
+          direction="row"
+          spacing={2}
+          sx={{ mt: 2 }}
+          useFlexGap
+          onSubmit={handleComment}
+        >
+          <TextField
+            label="comment"
+            name="comment"
+            autoComplete="comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            size="small"
+            variant="outlined"
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            size="small"
+            disabled={!comment.trim()}
+          >
+            ADD COMMENT
+          </Button>
+        </Stack>
+        {blog.comments?.length > 0 ? (
+          <Box
+            component="ul"
+            sx={{
+              mt: 2,
+              mb: 0,
+              pl: 3,
+              color: "text.primary",
+            }}
+          >
+            {blog.comments.map((blogComment, index) => (
+              <Typography
+                key={`${blogComment}-${index}`}
+                component="li"
+                variant="body1"
+                sx={{ mb: 0.75 }}
+              >
+                {blogComment}
+              </Typography>
+            ))}
+          </Box>
+        ) : (
+          <Typography color="text.secondary" sx={{ mt: 2 }}>
+            No comments yet.
+          </Typography>
+        )}
       </Paper>
     </Box>
   );
