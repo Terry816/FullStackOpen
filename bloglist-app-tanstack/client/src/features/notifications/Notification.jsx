@@ -1,16 +1,18 @@
 import { Alert } from "@mui/material";
 
 const Notification = ({ notification }) => {
-  if (notification === null) {
+  if (!notification?.message) {
     return null;
   }
 
+  const { message, type } = notification;
+
   return (
     <Alert
+      severity={type ?? "info"}
       style={{ marginTop: 10, marginBottom: 10 }}
-      severity={notification.type}
     >
-      {notification.text}
+      {message}
     </Alert>
   );
 };

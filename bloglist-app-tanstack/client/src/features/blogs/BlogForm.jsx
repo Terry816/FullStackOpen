@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Stack, Typography } from "@mui/material";
+import useBlogs from "../../hooks/useBlogs";
+import { useNotificationActions } from "../../store/notificationstore";
 
 const handleChange = (event, setField) => {
   setField(event.target.value);
 };
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = () => {
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newUrl, setNewUrl] = useState("");
 
   const navigate = useNavigate();
+  const { setMessage } = useNotificationActions();
+  const { createBlog } = useBlogs();
 
   const addBlog = (event) => {
     event.preventDefault();
@@ -21,7 +25,13 @@ const BlogForm = ({ createBlog }) => {
       url: newUrl,
     };
     createBlog(blogObject);
-
+    setMessage({
+      message: `A New Blog: ${blogObject.title} by ${blogObject.author} has been added`,
+      type: "success",
+    });
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
     setNewTitle("");
     setNewAuthor("");
     setNewUrl("");

@@ -1,31 +1,28 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Button, Link, Paper, Stack, Typography } from "@mui/material";
+import useBlogs from "../../hooks/useBlogs";
 
-const Blog = ({ blog, user, updateLike, removePost }) => {
+const Blog = ({ user }) => {
   const id = useParams().id;
   const navigate = useNavigate();
 
+  const { blogs, updateBlog, removeBlog } = useBlogs();
+  const blog = blogs.find((blog) => blog.id === id) ?? null;
+  const isOwner = String(blog.user?.id) === String(user?.id);
+
   const addLike = (event) => {
     event.preventDefault();
-    const blogObject = {
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      id: blog.id,
-      likes: blog.likes + 1,
-      user: blog.user,
-    };
-    updateLike(blogObject);
+    updateBlog(blog);
   };
 
-  const removeBlog = (event) => {
+  const removePost = (event) => {
     event.preventDefault();
     if (
       window.confirm(
         `Are you sure you want to delete: ${blog.title} by ${blog.author}?`,
       )
     ) {
-      removePost(id);
+      removeBlog(id);
       navigate("/");
     }
   };
@@ -84,7 +81,7 @@ const Blog = ({ blog, user, updateLike, removePost }) => {
           <Typography variant="body1" component="span">
             Likes: <strong>{blog.likes}</strong>
           </Typography>
-          {(user || removePost) && (
+          {
             <Stack direction="row" spacing={1} flexwrap="wrap" useFlexGap>
               {user && (
                 <Button
@@ -96,19 +93,19 @@ const Blog = ({ blog, user, updateLike, removePost }) => {
                   upvote
                 </Button>
               )}
-              {removePost && (
+              {isOwner && (
                 <Button
                   type="button"
                   variant="outlined"
                   size="small"
                   color="error"
-                  onClick={removeBlog}
+                  onClick={removePost}
                 >
                   remove
                 </Button>
               )}
             </Stack>
-          )}
+          }
         </Stack>
       </Paper>
     </Box>

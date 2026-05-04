@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import useBlogs from "../../hooks/useBlogs";
 
-const BlogList = ({ blogs, user }) => {
+const BlogList = ({ user }) => {
+  const { blogs } = useBlogs();
   return (
     <>
       {
