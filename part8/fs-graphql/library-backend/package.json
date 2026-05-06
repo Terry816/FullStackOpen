@@ -1,5 +1,5 @@
 {
-  "name": "graphql-phonebook-backend",
+  "name": "library-backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@apollo/server": "^5.0.0",
-    "graphql": "^16.11.0"
+    "@apollo/server": "^5.5.0",
+    "graphql": "^16.13.2"
   }
 }
