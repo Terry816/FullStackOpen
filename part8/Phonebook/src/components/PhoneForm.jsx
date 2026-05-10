@@ -1,0 +1,48 @@
+import { useState } from "react";
+import { useMutation } from "@apollo/client/react";
+import { EDIT_NUMBER } from "../queries";
+
+const PhoneForm = ({ setError }) => {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const [changeNumber] = useMutation(EDIT_NUMBER, {
+    onCompleted: (data) => {
+      if (!data.editNumber) {
+        setError("Person not Found");
+      }
+    },
+  });
+
+  const submit = (event) => {
+    event.preventDefault();
+    changeNumber({ variables: { name, phone } });
+    setName("");
+    setPhone("");
+  };
+
+  return (
+    <div>
+      <h2>Change Numbers</h2>
+      <form onSubmit={submit}>
+        <div>
+          name
+          <input
+            value={name}
+            onChange={({ target }) => setName(target.value)}
+          />
+        </div>
+        <div>
+          phone
+          <input
+            value={phone}
+            onChange={({ target }) => setPhone(target.value)}
+          />
+        </div>
+        <button type="submit">Change Number</button>
+      </form>
+    </div>
+  );
+};
+
+export default PhoneForm;

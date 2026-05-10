@@ -127,7 +127,7 @@ const typeDefs = /* GraphQL */ `
       published: Int!
       genres: [String!]!
     ): Book!
-    editAuthor(name: String!, setBornTo: Int!): Author!
+    editAuthor(name: String!, born: Int!): Author!
   }
 `;
 
@@ -175,7 +175,7 @@ const resolvers = {
       if (!author) {
         return null;
       }
-      const updatedAuthor = { ...author, born: args.setBornTo };
+      const updatedAuthor = { ...author, born: args.born };
       authors = authors.map((a) => (a.name !== args.name ? a : updatedAuthor));
       return updatedAuthor;
     },
