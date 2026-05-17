@@ -1,37 +1,45 @@
 import { useState } from "react";
-import { EDIT_AUTHOR } from "../queries";
+import { ALL_AUTHORS, EDIT_AUTHOR } from "../queries";
 import { useMutation } from "@apollo/client/react";
 
 const SetBirth = ({ authors }) => {
-  const [name, setName] = useState("");
+  const [name, setName] = useState(authors[0]?.name ?? "");
   const [year, setYear] = useState(0);
 
-  const [editAuthor] = useMutation(EDIT_AUTHOR);
+  const [editAuthor] = useMutation(EDIT_AUTHOR, {
+    refetchQueries: [{ query: ALL_AUTHORS }],
+  });
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault();
-    editAuthor({ variables: { name, born: year } });
-    setName("");
+    await editAuthor({ variables: { name, setBornTo: year } });
+    setName(authors[0]?.name ?? "");
     setYear(0);
   };
 
   return (
     <div>
-      <h2>Set Birth Year</h2>
+      <h2>Set birthyear</h2>
       <form onSubmit={submit}>
         <div>
           <label>
-            Name
-            <select value={name} onChange={(e) => setName(e.target.value)}>
+            name
+            <select
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            >
               {authors.map((a) => (
-                <option key={a.id}>{a.name}</option>
+                <option value={a.name} key={a.id}>
+                  {a.name}
+                </option>
               ))}
             </select>
           </label>
         </div>
         <div>
           <label>
-            Born
+            born
             <input
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
