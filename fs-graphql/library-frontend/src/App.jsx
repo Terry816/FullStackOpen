@@ -4,7 +4,8 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
 import Recommendations from "./components/Recommendations";
-import { useApolloClient } from "@apollo/client/react";
+import { useApolloClient, useSubscription } from "@apollo/client/react";
+import { ALL_BOOKS, BOOK_ADDED } from "./queries";
 
 const App = () => {
   const [page, setPage] = useState("authors");
@@ -12,6 +13,38 @@ const App = () => {
     localStorage.getItem("library-user-token"),
   );
   const client = useApolloClient();
+
+  const updateBooksCache = (addedBook) => {
+    const addToCache = (variables) => {
+      client.cache.updateQuery({ query: ALL_BOOKS, variables }, (data) => {
+        if (!data || data.allBooks.some((book) => book.id === addedBook.id)) {
+          return data;
+        }
+
+        return {
+          allBooks: data.allBooks.concat(addedBook),
+        };
+      });
+    };
+
+    addToCache();
+    addToCache({ genre: null });
+    addedBook.genres.forEach((genre) => {
+      addToCache({ genre });
+    });
+  };
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const addedBook = data.data?.bookAdded;
+      if (!addedBook) {
+        return;
+      }
+
+      window.alert(`new book added: ${addedBook.title}`);
+      updateBooksCache(addedBook);
+    },
+  });
 
   const onLogout = () => {
     setToken(null);

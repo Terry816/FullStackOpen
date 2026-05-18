@@ -8,12 +8,8 @@ const typeDefs = /* GraphQL */ `
     name: String!
     phone: String
     address: Address!
+    friendOf: [User!]!
     id: ID!
-  }
-
-  enum YesNo {
-    YES
-    NO
   }
 
   type User {
@@ -24,6 +20,11 @@ const typeDefs = /* GraphQL */ `
 
   type Token {
     value: String!
+  }
+
+  enum YesNo {
+    YES
+    NO
   }
 
   type Query {
@@ -44,6 +45,10 @@ const typeDefs = /* GraphQL */ `
     createUser(username: String!): User
     login(username: String!, password: String!): Token
     addAsFriend(name: String!): User
+  }
+
+  type Subscription {
+    personAdded: Person!
   }
 `;
 

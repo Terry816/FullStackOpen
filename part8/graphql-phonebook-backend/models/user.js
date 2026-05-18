@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
   username: {
@@ -9,9 +9,9 @@ const schema = new mongoose.Schema({
   friends: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Person",
+      ref: 'Person',
     },
   ],
-});
+})
 
-module.exports = mongoose.model("User", schema);
+module.exports = mongoose.model('User', schema)
