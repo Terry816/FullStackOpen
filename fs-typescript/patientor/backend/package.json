@@ -1,23 +1,21 @@
 {
-  "name": "basic",
+  "name": "patientor",
   "version": "1.0.0",
   "description": "",
   "license": "ISC",
   "author": "",
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "tsc": "tsc",
-    "multiply": "node multiplier.ts",
     "dev": "concurrently \"tsc --watch\" \"node --watch --experimental-transform-types index.ts\"",
     "start": "node --experimental-transform-types index.ts",
     "lint": "eslint ."
   },
-  "main": "index.js",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/express": "^5.0.6",
-    "@types/node": "^25.9.1",
     "concurrently": "^10.0.3",
     "eslint": "^10.5.0",
     "typescript": "^6.0.3",
